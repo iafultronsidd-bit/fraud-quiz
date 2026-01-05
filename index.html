@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Detect Online Frauds Quiz - India</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; 
+            background: linear-gradient(-45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: #333;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 40px; }
+        .header h1 { font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: fadeIn 1s ease; }
+        .header p { font-size: 1.2em; margin-top: 10px; }
+        .question-container { 
+            background: rgba(255,255,255,0.95); 
+            border-radius: 20px; 
+            padding: 40px 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            animation: slideInUp 0.8s ease forwards; 
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .question-number { font-size: 1.1em; color: #ff6b6b; font-weight: 600; margin-bottom: 20px; }
+        .question-text { font-size: 1.4em; font-weight: 600; margin-bottom: 30px; line-height: 1.4; }
+        .options { list-style: none; }
+        .option { 
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
+            margin-bottom: 15px; 
+            padding: 20px; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border: 2px solid transparent;
+            position: relative;
+            font-size: 1.1em;
+        }
+        .option:hover { transform: translateX(10px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .option.selected { background: linear-gradient(135deg, #4ecdc4, #45b7d1); color: white; border-color: #4ecdc4; }
+        .feedback { 
+            margin-top: 20px; padding: 20px; border-radius: 15px; font-size: 1.1em; line-height: 1.5; 
+            animation: fadeIn 0.5s ease; min-height: 120px;
+        }
+        .incorrect { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; }
+        .correct { background: linear-gradient(135deg, #4ecdc4, #96ceb4); color: white; }
+        .btn { 
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1); 
+            color: white; 
+            border: none; 
+            padding: 15px 40px; 
+            font-size: 1.2em; 
+            font-weight: 600; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            width: 100%; 
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(78,205,196,0.3);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(78,205,196,0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .progress { text-align: center; color: white; font-size: 1.1em; margin-bottom: 20px; }
+        .score { font-size: 2em; text-align: center; color: white; margin: 20px 0; }
+        .image { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; opacity: 0.8; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @media (max-width: 768px) { 
+            .header h1 { font-size: 2em; } 
+            .question-container { padding: 30px 20px; } 
+        }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .particle { 
+            position: absolute; width: 4px; height: 4px; 
+            background: rgba(255,255,255,0.5); 
+            border-radius: 50%; 
+            animation: float 20s infinite linear; 
+        }
+        @keyframes float { 
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 
+            10% { opacity: 1; } 
+            90% { opacity: 1; } 
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Detect Online Frauds Quiz</h1>
+            <p>Stay safe from common scams in India! Answer one question at a time.</p>
+            <div class="progress" id="progress">Question <span id="currentQ">1</span> of 5</div>
+        </div>
+        <div id="quiz">
+            <div class="question-container" id="question-container">
+                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=300&fit=crop" alt="Cyber Security" class="image" id="qimage">
+                <div class="question-number">Question <span id="qnum">1</span></div>
+                <div class="question-text" id="question"></div>
+                <ul class="options" id="options"></ul>
+                <div id="feedback"></div>
+                <button class="btn" id="nextBtn" style="display:none;">Next Question</button>
+            </div>
+        </div>
+        <div id="result" style="display:none;">
+            <div class="question-container">
+                <div class="score" id="finalScore"></div>
+                <p style="text-align:center; font-size:1.3em;">Great job learning about online frauds!</p>
+                <button class="btn" onclick="restartQuiz()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                "question": "Which of the following is a common sign of a phishing scam in India?",
+                "options": ["A. Email from your bank with your account number", "B. Unsolicited call asking for OTP", "C. Official website with HTTPS", "D. Personalized greeting from a friend"],
+                "correct": 1,
+                "explanation": "Phishing scams often involve unsolicited calls or messages asking for OTP or sensitive info. Banks never request OTPs over phone. Real sites use HTTPS, but scammers can too; always verify sender. Report to 1930 helpline. In 2025, such scams cost Indians billions. because next time whenever you see such messages next time hang up and contact bank directly."
+            },
+            {
+                "question": "In 'digital arrest' scams popular in India lately, fraudsters claim you are:",
+                "options": ["A. Eligible for a government grant", "B. Under arrest for a crime", "C. Winner of a lottery", "D. Due for a bank refund"],
+                "correct": 1,
+                "explanation": "Fraudsters pose as police via video call, claiming arrest for fake crimes like money laundering, demanding payment to avoid jail. No legitimate agency arrests via phone/video. Verify by visiting local station. RBI warns against such; report to cybercrime.gov.in. In 2025, cases surged with losses over Rs 1000 crore."
+            },
+            {
+                "question": "'Your parcel is stuck' scams in India usually come via:",
+                "options": ["A. Official courier app notification", "B. WhatsApp from unknown number", "C. Email from registered courier", "D. SMS from 10-digit number"],
+                "correct": 1,
+                "explanation": "Scammers send WhatsApp links claiming parcel issues, leading to fake sites stealing card details or UPI PIN. Legit couriers use app/SMS, not unknown WhatsApp. Check tracking officially. Common in India post-festivals; losses in crores. because next time whenever you see such messages next time ignore and contact courier directly."
+            },
+            {
+                "question": "AI deepfake voice scams involve:",
+                "options": ["A. Cloning your boss's voice for urgent payment", "B. Sending virus via email", "C. Fake lottery win SMS", "D. Phishing bank email"],
+                "correct": 0,
+                "explanation": "Scammers use AI to mimic relative/friend/boss voice, asking for quick money via UPI. Verify by callback on known number. Never share OTP. Rising in India 2025 with tech advances; report to 1930."
+            },
+            {
+                "question": "For investment scams promising high returns on WhatsApp groups:",
+                "options": ["A. They are always legitimate", "B. No guaranteed returns in investments", "C. Check SEBI registration", "D. Both B and C"],
+                "correct": 3,
+                "explanation": "Ponzi schemes lure with 20-50% returns via fake apps/sites. SEBI regulates genuine investments; verify on sebi.gov.in. No scheme guarantees high fixed returns. RBI warns; many 2025 busts by CBI. Invest only via authorized platforms."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('qnum').textContent = currentQuestion + 1;
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('question').textContent = q.question;
+            const optionsEl = document.getElementById('options');
+            optionsEl.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const li = document.createElement('li');
+                li.className = 'option';
+                li.textContent = opt;
+                li.onclick = () => selectOption(index);
+                optionsEl.appendChild(li);
+            });
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+            
+            const images = [
+                'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1611593731751-f59787e98353?w=600&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1635759958275-e3b91a70d0df?w=600&h=300&fit=crop'
+            ];
+            document.getElementById('qimage').src = images[Math.floor(Math.random()*images.length)];
+        }
+
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            answered = true;
+            const q = quizData[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === selectedIndex) {
+                    opt.classList.add('selected');
+                }
+                if (i === q.correct) {
+                    opt.style.borderColor = '#4ecdc4';
+                }
+            });
+            const feedbackEl = document.getElementById('feedback');
+            const isCorrect = selectedIndex === q.correct;
+            if (isCorrect) {
+                score++;
+                feedbackEl.innerHTML = '<div class="feedback correct">✅ Congratulations! Correct answer.</div>';
+            } else {
+                feedbackEl.innerHTML = '<div class="feedback incorrect">❌ Incorrect. Here\'s why:</div>';
+            }
+            feedbackEl.innerHTML += '<div style="margin-top:15px; padding:15px; background:rgba(255,255,255,0.8); border-radius:10px; font-size:1em;">' + q.explanation + '</div>';
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        };
+
+        function showResult() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('finalScore').innerHTML = `Your Score: ${score} / ${quizData.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('progress').innerHTML = `Question <span id="currentQ">1</span> of 5`;
+            loadQuestion();
+        }
+
+        function createParticles() {
+            const particlesEl = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesEl.appendChild(particle);
+            }
+        }
+        createParticles();
+        loadQuestion();
+    </script>
+</body>
+</html>
